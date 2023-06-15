@@ -65,8 +65,9 @@ function getPowerFunction(exponent) {
  *   getPolynom(8)     => y = 8
  *   getPolynom()      => null
  */
-function getPolynom() {
-  throw new Error('Not implemented');
+function getPolynom(...args) {
+  const prefixArr = args.reverse();
+  return (x) => prefixArr.reduce((sum, item, idx) => sum + item * (x ** idx), null);
 }
 
 
@@ -105,8 +106,20 @@ function memoize(func) {
  * }, 2);
  * retryer() => 2
  */
-function retry(/* func, attempts */) {
-  throw new Error('Not implemented');
+function retry(func, attempts) {
+  let retryAttempts = 0;
+  const newTry = () => {
+    if (retryAttempts < attempts) {
+      try {
+        return func();
+      } catch (error) {
+        retryAttempts += 1;
+        return newTry();
+      }
+    }
+    return retryAttempts;
+  };
+  return newTry;
 }
 
 
@@ -133,8 +146,14 @@ function retry(/* func, attempts */) {
  * cos(3.141592653589793) ends
  *
  */
-function logger(/* func, logFunc */) {
-  throw new Error('Not implemented');
+function logger(func, logFunc) {
+  return (...args) => {
+    const funcString = `${func.name}(${JSON.stringify(args).slice(1, -1)})`;
+    logFunc(`${funcString} starts`);
+    const result = func(...args);
+    logFunc(`${funcString} ends`);
+    return result;
+  };
 }
 
 
@@ -151,8 +170,9 @@ function logger(/* func, logFunc */) {
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
-function partialUsingArguments(/* fn, ...args1 */) {
-  throw new Error('Not implemented');
+function partialUsingArguments(fn, ...args1) {
+  const useAllArgs = (...args2) => fn(...args1, ...args2);
+  return useAllArgs;
 }
 
 
@@ -173,8 +193,14 @@ function partialUsingArguments(/* fn, ...args1 */) {
  *   getId4() => 7
  *   getId10() => 11
  */
-function getIdGeneratorFunction(/* startFrom */) {
-  throw new Error('Not implemented');
+function getIdGeneratorFunction(startFrom) {
+  let IDCounter = startFrom;
+  const getID = () => {
+    const currentID = IDCounter;
+    IDCounter += 1;
+    return currentID;
+  };
+  return getID;
 }
 
 
